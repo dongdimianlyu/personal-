@@ -9,7 +9,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const ROLES = ["Fullstack", "Founder", "Scholar"];
+const ROLES = ["Archetypal Genius", "Chad", "Extraordinary Man"];
 const HLS_URL = "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
 
 export function Hero() {
@@ -160,15 +160,15 @@ export function Hero() {
         </div>
         
         <h1 className="name-reveal text-6xl md:text-8xl lg:text-9xl font-display italic leading-[0.9] tracking-tight text-text-primary mb-6">
-          Jiaren Lyu
+          Jiaren
         </h1>
         
         <div className="blur-in text-xl md:text-2xl lg:text-3xl text-text-primary/90 mb-6 flex items-center gap-2">
-          A <span key={roleIndex} className="font-display italic text-text-primary animate-role-fade-in inline-block min-w-[120px] text-left">{ROLES[roleIndex]}</span> lives in Penang.
+          A <span key={roleIndex} className="font-display italic text-text-primary animate-role-fade-in inline-block min-w-[120px] text-left">{ROLES[roleIndex]}</span> who's middle name spells like s-i-g-m-a
         </div>
         
         <p className="blur-in text-sm md:text-base text-muted max-w-md mb-12">
-          Designing seamless digital interactions by focusing on the unique nuances which bring systems to life.
+         "Rather than fame, than money, than power, give me truth"
         </p>
         
         <div className="blur-in flex flex-wrap items-center justify-center gap-4">

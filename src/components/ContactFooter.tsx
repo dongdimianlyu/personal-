@@ -89,7 +89,7 @@ export function ContactFooter() {
           </p>
 
           <motion.a
-            href="mailto:hello@michaelsmith.com"
+            href="dongdimian@gmail.com"
             whileTap={{ scale: 0.97 }}
             className="group relative inline-flex items-center gap-3 px-8 py-4 bg-bg border-2 border-stroke rounded-full transition-colors hover:border-transparent"
           >

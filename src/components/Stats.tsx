@@ -7,9 +7,9 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const STATS = [
-  { number: "20+", label: "Years Experience", sublabel: "In the web design industry fied." },
-  { number: "95+", label: "Projects Done", sublabel: "Around worldwide in last five years." },
-  { number: "200%", label: "Satisfied Clients", sublabel: "With a great experience and results." },
+  { number: "1+", label: "Years Experience", sublabel: "In anything" },
+  { number: "12+", label: "Projects Done", sublabel: "In last five years." },
+  { number: "millions", label: "Satisfied Clients", sublabel: "With a great experience and results." },
 ];
 
 export function Stats() {

@@ -9,8 +9,7 @@ function cn(...inputs: ClassValue[]) {
 
 const PROJECTS = [
   { slug: "variable-stars-project", title: "discovered 136 novel variable astrophysical objects", image: "/projects/8JeeV5CgKcEmLBs42PJQzf%20(1).jpg", gradient: "from-violet-500 via-fuchsia-400/60 via-indigo-500/60 to-transparent" },
-  { slug: "urban-architecture", title: "Urban Architecture", image: "/projects/building.png", gradient: "from-sky-500 via-blue-400/60 to-transparent" },
-  { slug: "human-perspective", title: "Human Perspective", image: "/projects/person.png", gradient: "from-emerald-500 via-emerald-300/60 via-teal-500/60 to-transparent" },
+
   { slug: "brand-identity", title: "Brand Identity", image: "/projects/Screenshot%202026-03-04%20at%2010.05.16%E2%80%AFPM.png", gradient: "from-amber-500 via-amber-300/60 via-orange-500/60 to-transparent" },
 ];
 
