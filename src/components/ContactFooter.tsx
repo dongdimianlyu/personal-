@@ -1,8 +1,6 @@
 import { useEffect, useRef } from "react";
 import Hls from "hls.js";
 import gsap from "gsap";
-import { ArrowUpRight } from "lucide-react";
-import { motion } from "framer-motion";
 
 const HLS_URL = "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
 
@@ -84,36 +82,14 @@ export function ContactFooter() {
       <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16 mt-auto">
         {/* CTA */}
         <div className="flex flex-col items-center text-center mb-24 md:mb-32">
-          <p className="text-xl md:text-3xl text-text-primary/80 max-w-2xl mx-auto mb-10 leading-relaxed font-display">
-            Have a project in mind? I'm always open to new ideas and collaborations.
+          <p className="text-xl md:text-3xl text-text-primary/80 max-w-2xl mx-auto mb-4 leading-relaxed font-display italic">
+            "There is nothing impossible to him who will try."
           </p>
-
-          <motion.a
-            href="dongdimian@gmail.com"
-            whileTap={{ scale: 0.97 }}
-            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-bg border-2 border-stroke rounded-full transition-colors hover:border-transparent"
-          >
-            <span className="absolute inset-[-2px] rounded-full opacity-0 group-hover:opacity-100 accent-gradient transition-opacity -z-10" />
-            <span className="text-lg font-medium">hello@michaelsmith.com</span>
-            <ArrowUpRight className="w-5 h-5 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-          </motion.a>
+          <span className="text-sm text-muted uppercase tracking-[0.3em]">— Alexander the Great</span>
         </div>
 
         {/* Footer Bar */}
-        <div className="border-t border-stroke pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          {/* Social Links */}
-          <div className="flex flex-wrap justify-center gap-6">
-            {["Twitter", "LinkedIn", "Dribbble", "GitHub"].map((platform) => (
-              <a
-                key={platform}
-                href="#"
-                className="text-sm text-muted hover:text-text-primary transition-all duration-300 hover:-translate-y-0.5"
-              >
-                {platform}
-              </a>
-            ))}
-          </div>
-
+        <div className="border-t border-stroke pt-8 flex items-center justify-center">
           {/* Availability */}
           <div className="flex items-center gap-3 bg-surface/50 border border-stroke/50 rounded-full px-4 py-2 backdrop-blur-sm">
             <div className="relative flex h-3 w-3">

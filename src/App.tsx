@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { LoadingScreen } from "./components/LoadingScreen";
 import { Hero } from "./components/Hero";
-import { SelectedWorks } from "./components/SelectedWorks";
-import { Journal } from "./components/Journal";
-import { Explorations } from "./components/Explorations";
+import { Projects } from "./components/Projects";
 import { Stats } from "./components/Stats";
 import { ContactFooter } from "./components/ContactFooter";
 
@@ -19,9 +17,7 @@ function App() {
         style={{ opacity: isLoading ? 0 : 1 }}
       >
         <Hero />
-        <SelectedWorks />
-        <Journal />
-        <Explorations />
+        <Projects />
         <Stats />
         <ContactFooter />
       </div>

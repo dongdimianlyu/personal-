@@ -9,7 +9,7 @@ function cn(...inputs: ClassValue[]) {
 const STATS = [
   { number: "1+", label: "Years Experience", sublabel: "In anything" },
   { number: "12+", label: "Projects Done", sublabel: "In last five years." },
-  { number: "millions", label: "Satisfied Clients", sublabel: "With a great experience and results." },
+  { number: "1m+", label: "Satisfied Clients", sublabel: "With a great experience and results." },
 ];
 
 export function Stats() {
