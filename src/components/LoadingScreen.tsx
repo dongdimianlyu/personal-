@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-const WORDS = ["Design", "Create", "Inspire"];
+const WORDS = ["I am", "Such a", "Genius"];
 const TOTAL_DURATION = 2700;
 const CYCLE_DURATION = 900;
 

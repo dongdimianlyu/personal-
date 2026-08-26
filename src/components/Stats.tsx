@@ -7,9 +7,9 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const STATS = [
-  { number: "1+", label: "Years Experience", sublabel: "In anything" },
-  { number: "12+", label: "Projects Done", sublabel: "In last five years." },
-  { number: "1m+", label: "Satisfied Clients", sublabel: "With a great experience and results." },
+  { number: "4+", label: "Years Experience", sublabel: "In Software Engineering" },
+  { number: "12+", label: "Projects Done", sublabel: "In last 5 years." },
+  { number: "1m+", label: "Seconds Lived", sublabel: "With a long story to tell" },
 ];
 
 export function Stats() {
@@ -32,7 +32,7 @@ export function Stats() {
             Making an <span className="font-display italic text-text-primary/90">impact</span>
           </h2>
           <p className="text-muted md:text-lg">
-            Numbers that represent a journey of continuous learning, dedication to craft, and successful collaborations with clients worldwide.
+            Numbers that although impressive, doesn't scratch the surface of the overwhelming, fiery vision I hold for tomorrow
           </p>
         </motion.div>
 

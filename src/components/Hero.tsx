@@ -9,7 +9,7 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const ROLES = ["Archetypal Genius", "Chad", "Extraordinary Man"];
+const ROLES = ["Archetypal Genius", "Landlord", "Extraordinary Man"];
 const HLS_URL = "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
 
 export function Hero() {
@@ -164,7 +164,7 @@ export function Hero() {
         </h1>
         
         <div className="blur-in text-xl md:text-2xl lg:text-3xl text-text-primary/90 mb-6 flex items-center gap-2">
-          A <span key={roleIndex} className="font-display italic text-text-primary animate-role-fade-in inline-block min-w-[120px] text-left">{ROLES[roleIndex]}</span> who's middle name spells like s-i-g-m-a
+          A <span key={roleIndex} className="font-display italic text-text-primary animate-role-fade-in inline-block min-w-[120px] text-left">{ROLES[roleIndex]}</span> who will change the trajectory our species
         </div>
         
         <p className="blur-in text-sm md:text-base text-muted max-w-md mb-12">
