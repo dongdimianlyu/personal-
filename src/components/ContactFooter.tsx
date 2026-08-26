@@ -71,7 +71,7 @@ export function ContactFooter() {
                   key={`${i}-${j}`}
                   className="text-5xl md:text-7xl lg:text-8xl font-display italic text-text-primary/10 tracking-tight pr-8"
                 >
-                  BUILDING THE FUTURE •
+                  THE WORLD IS YOURS  •
                 </span>
               ))}
             </div>
@@ -83,9 +83,9 @@ export function ContactFooter() {
         {/* CTA */}
         <div className="flex flex-col items-center text-center mb-24 md:mb-32">
           <p className="text-xl md:text-3xl text-text-primary/80 max-w-2xl mx-auto mb-4 leading-relaxed font-display italic">
-            "There is nothing impossible to him who will try."
+            "I believe that there is nothing lovelier, deeper, more sympathetic, more rational, more manly, and more perfect than the savior; I say to myself with jealous love that not only is there no one else like him, but that there could be no one. I would even say more: If anyone could prove to me that Christ is outside the truth, and if the truth really did exclude Christ, I should prefer to stay with Christ and not with truth"
           </p>
-          <span className="text-sm text-muted uppercase tracking-[0.3em]">— Alexander the Great</span>
+          <span className="text-sm text-muted uppercase tracking-[0.3em]">— Dostoevsky</span>
         </div>
 
         {/* Footer Bar */}
