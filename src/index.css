@@ -17,35 +17,17 @@
 
   body {
     @apply bg-bg text-text-primary font-body antialiased selection:bg-text-primary selection:text-bg;
+  }
+
+  body.custom-cursor-active,
+  body.custom-cursor-active a,
+  body.custom-cursor-active button,
+  body.custom-cursor-active [role='button'],
+  body.custom-cursor-active input,
+  body.custom-cursor-active textarea,
+  body.custom-cursor-active select,
+  body.custom-cursor-active label {
     cursor: none;
-  }
-
-  a,
-  button,
-  [role='button'],
-  input,
-  textarea,
-  select,
-  label {
-    cursor: none;
-  }
-}
-
-@media (hover: none) and (pointer: coarse) {
-  body,
-  a,
-  button,
-  [role='button'],
-  input,
-  textarea,
-  select,
-  label {
-    cursor: auto;
-  }
-
-  .custom-cursor-dot,
-  .custom-cursor-ring {
-    display: none;
   }
 }
 
@@ -54,11 +36,100 @@
     background: linear-gradient(90deg, #89AACC 0%, #4E85BF 100%);
   }
 
-  .custom-cursor-dot.cursor-hover {
-    @apply w-3 h-3 opacity-80;
+  .custom-cursor {
+    opacity: 0;
+    transition: opacity 0.35s ease;
   }
 
-  .custom-cursor-ring.cursor-hover {
-    @apply w-12 h-12 border-text-primary/60;
+  .custom-cursor[data-visible='true'] {
+    opacity: 1;
+  }
+
+  .custom-cursor__dot,
+  .custom-cursor__ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  .custom-cursor__dot {
+    width: 6px;
+    height: 6px;
+    margin: -3px 0 0 -3px;
+    border-radius: 9999px;
+    background: #f5f5f5;
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.35),
+      0 0 18px rgba(137, 170, 204, 0.55);
+    transition:
+      width 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      margin 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      opacity 0.35s ease,
+      box-shadow 0.35s ease,
+      background-color 0.35s ease;
+  }
+
+  .custom-cursor__ring {
+    width: 36px;
+    height: 36px;
+    margin: -18px 0 0 -18px;
+    border-radius: 9999px;
+    border: 1px solid rgba(245, 245, 245, 0.45);
+    background: rgba(245, 245, 245, 0.03);
+    backdrop-filter: blur(2px);
+    transition:
+      width 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      margin 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.35s ease,
+      background-color 0.35s ease,
+      box-shadow 0.35s ease,
+      opacity 0.35s ease;
+  }
+
+  .custom-cursor[data-hover='true'] .custom-cursor__dot {
+    width: 4px;
+    height: 4px;
+    margin: -2px 0 0 -2px;
+    opacity: 0.9;
+    background: #89aacc;
+    box-shadow:
+      0 0 0 1px rgba(137, 170, 204, 0.35),
+      0 0 24px rgba(137, 170, 204, 0.65);
+  }
+
+  .custom-cursor[data-hover='true'] .custom-cursor__ring {
+    width: 54px;
+    height: 54px;
+    margin: -27px 0 0 -27px;
+    border-color: rgba(137, 170, 204, 0.75);
+    background: rgba(137, 170, 204, 0.08);
+    box-shadow:
+      0 0 0 1px rgba(137, 170, 204, 0.12),
+      0 0 32px rgba(78, 133, 191, 0.22);
+  }
+
+  .custom-cursor[data-press='true'] .custom-cursor__dot {
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    background: #4e85bf;
+  }
+
+  .custom-cursor[data-press='true'] .custom-cursor__ring {
+    width: 30px;
+    height: 30px;
+    margin: -15px 0 0 -15px;
+    border-color: rgba(78, 133, 191, 0.9);
+    background: rgba(78, 133, 191, 0.14);
+  }
+
+  .custom-cursor[data-hover='true'][data-press='true'] .custom-cursor__ring {
+    width: 46px;
+    height: 46px;
+    margin: -23px 0 0 -23px;
   }
 }

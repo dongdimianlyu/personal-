@@ -26,7 +26,7 @@ function App() {
   return (
     <SmoothScroll>
       <main className="bg-bg min-h-screen text-text-primary">
-        <CustomCursor />
+        <CustomCursor disabled={isLoading} />
         {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}
 
         <div
