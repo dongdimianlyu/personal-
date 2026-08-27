@@ -131,11 +131,13 @@ export function Hero() {
             {[
               { label: "Home", href: "#" },
               { label: "Work", href: "#work" },
-              { label: "Resume", href: "#resume" }
+              { label: "Resume", href: "/Jiaren_Lyu_Resume.docx", external: true },
             ].map((link, i) => (
               <a
                 key={link.label}
                 href={link.href}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
                 onClick={(e) => {
                   if (link.href.startsWith("#")) {
                     e.preventDefault();
