@@ -20,8 +20,8 @@ export function Stats() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
-          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, margin: "-80px" }}
           className="max-w-xl mb-16 md:mb-24"
         >
           <div className="flex items-center gap-4 mb-6">
@@ -32,7 +32,7 @@ export function Stats() {
             Making an <span className="font-display italic text-text-primary/90">impact</span>
           </h2>
           <p className="text-muted md:text-lg">
-            Numbers that although impressive, doesn't scratch the surface of the overwhelming, fiery vision I hold for tomorrow
+            The numbers
           </p>
         </motion.div>
 
@@ -43,8 +43,8 @@ export function Stats() {
               key={stat.label}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: i * 0.15, ease: "easeOut" }}
-              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 1.2, delay: i * 0.2, ease: [0.22, 1, 0.36, 1] }}
+              viewport={{ once: true, margin: "-40px" }}
               className={cn(
                 "flex flex-col gap-6",
                 // 3rd card spans 2 cols on small screens, 1 col on large
@@ -61,7 +61,7 @@ export function Stats() {
                 <motion.div
                   initial={{ x: "-100%" }}
                   whileInView={{ x: "0%" }}
-                  transition={{ duration: 1, delay: 0.3 + i * 0.15, ease: "circOut" }}
+                  transition={{ duration: 1.4, delay: 0.4 + i * 0.2, ease: [0.22, 1, 0.36, 1] }}
                   viewport={{ once: true }}
                   className="absolute inset-0 bg-text-primary/30"
                 />

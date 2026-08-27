@@ -12,10 +12,14 @@ function cn(...inputs: ClassValue[]) {
 const ROLES = ["Archetypal Genius", "Landlord", "Extraordinary Man"];
 const HLS_URL = "https://stream.mux.com/Aa02T7oM1wH5Mk5EEVDYhbZ1ChcdhRsS2m1NYyx4Ua1g.m3u8";
 
+const LINKEDIN_URL = "https://www.linkedin.com/in/jiarenlyu";
+const EMAIL = "jiarenlyu@gmail.com";
+
 export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [roleIndex, setRoleIndex] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [emailCopied, setEmailCopied] = useState(false);
 
   useEffect(() => {
     // HLS Video Setup
@@ -59,23 +63,37 @@ export function Hero() {
   }, []);
 
   useEffect(() => {
-    // GSAP Animations
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
     tl.fromTo(
       ".name-reveal",
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1.2, delay: 0.1 }
+      { opacity: 0, y: 60 },
+      { opacity: 1, y: 0, duration: 1.8, delay: 0.2 }
     ).fromTo(
       ".blur-in",
-      { opacity: 0, filter: "blur(10px)", y: 20 },
-      { opacity: 1, filter: "blur(0px)", y: 0, duration: 1, stagger: 0.1 },
-      "-=0.8"
+      { opacity: 0, filter: "blur(12px)", y: 30 },
+      { opacity: 1, filter: "blur(0px)", y: 0, duration: 1.4, stagger: 0.18 },
+      "-=1.2"
     );
   }, []);
 
+  const handleReachOut = async () => {
+    try {
+      await navigator.clipboard.writeText(EMAIL);
+      setEmailCopied(true);
+      setTimeout(() => setEmailCopied(false), 2000);
+    } catch {
+      window.location.href = `mailto:${EMAIL}`;
+    }
+  };
+
+  const scrollToSection = (selector: string) => {
+    const element = document.querySelector(selector);
+    element?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
-    <section className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
+    <section id="hero" className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
       {/* Background Video */}
       <div className="absolute inset-0 w-full h-full">
         <video
@@ -124,8 +142,7 @@ export function Hero() {
                     if (link.href === "#") {
                       window.scrollTo({ top: 0, behavior: "smooth" });
                     } else {
-                      const element = document.querySelector(link.href);
-                      element?.scrollIntoView({ behavior: "smooth" });
+                      scrollToSection(link.href);
                     }
                   }
                 }}
@@ -144,12 +161,17 @@ export function Hero() {
           <div className="w-px h-5 bg-stroke mx-2" />
 
           {/* Say Hi Button */}
-          <button className="group relative text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2">
+          <a
+            href={LINKEDIN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative text-xs sm:text-sm px-3 sm:px-4 py-1.5 sm:py-2"
+          >
             <span className="absolute inset-[-2px] rounded-full opacity-0 group-hover:opacity-100 accent-gradient transition-opacity" />
             <div className="relative flex items-center gap-1.5 bg-surface rounded-full backdrop-blur-md px-3 sm:px-4 py-1.5 sm:py-2 text-text-primary">
               Say hi <ArrowUpRight className="w-3 h-3" />
             </div>
-          </button>
+          </a>
         </div>
       </nav>
 
@@ -172,16 +194,26 @@ export function Hero() {
         </p>
         
         <div className="blur-in flex flex-wrap items-center justify-center gap-4">
-          <button className="group relative rounded-full text-sm px-7 py-3.5 bg-text-primary text-bg hover:text-text-primary transition-all hover:scale-105 overflow-hidden">
+          <button
+            type="button"
+            onClick={() => scrollToSection("#work")}
+            className="group relative rounded-full text-sm px-7 py-3.5 bg-text-primary text-bg hover:text-text-primary transition-all hover:scale-105 overflow-hidden"
+          >
             <span className="absolute inset-0 opacity-0 group-hover:opacity-100 accent-gradient transition-opacity" />
             <span className="absolute inset-[2px] bg-bg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
             <span className="relative z-10 font-medium">See Works</span>
           </button>
           
-          <button className="group relative rounded-full text-sm px-7 py-3.5 border-2 border-stroke bg-bg text-text-primary hover:border-transparent transition-all hover:scale-105 overflow-hidden">
+          <button
+            type="button"
+            onClick={handleReachOut}
+            className="group relative rounded-full text-sm px-7 py-3.5 border-2 border-stroke bg-bg text-text-primary hover:border-transparent transition-all hover:scale-105 overflow-hidden min-w-[140px]"
+          >
             <span className="absolute inset-0 opacity-0 group-hover:opacity-100 accent-gradient transition-opacity" />
             <span className="absolute inset-[2px] bg-bg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-            <span className="relative z-10 font-medium">Reach out...</span>
+            <span className="relative z-10 font-medium">
+              {emailCopied ? "Copied!" : "Reach out..."}
+            </span>
           </button>
         </div>
       </div>

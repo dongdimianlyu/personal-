@@ -4,7 +4,7 @@ import { ArrowUpRight, Telescope, Rocket, Wrench } from "lucide-react";
 const PROJECTS = [
   {
     icon: Telescope,
-    text: "I Built a pipeline that analyzes astronomical star data to automatically detect and classify variable stars, identifying about 130 candidates now under review by AAVSO.",
+    text: "Built a pipeline that analyzes astronomical star data to automatically detect and classify variable stars, identifying about 130 candidates now under review by AAVSO.",
     href: "https://github.com/dongdimianlyu/variable-star-project/blob/0e019044be1ac88d3eae091ec9dd0d3eb4e0bb83/README.md",
     label: "View README",
   },
@@ -30,8 +30,8 @@ export function Projects() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: [0.25, 0.1, 0.25, 1] }}
-          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+          viewport={{ once: true, margin: "-80px" }}
           className="max-w-xl mb-16 md:mb-24"
         >
           <div className="flex items-center gap-4 mb-6">
@@ -55,8 +55,8 @@ export function Projects() {
                 key={project.href}
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: i * 0.12, ease: "easeOut" }}
-                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 1.2, delay: i * 0.18, ease: [0.22, 1, 0.36, 1] }}
+                viewport={{ once: true, margin: "-40px" }}
                 className="group relative flex flex-col justify-between bg-surface/40 border border-stroke rounded-3xl p-8 md:p-9 min-h-[320px] transition-colors hover:bg-surface/70"
               >
                 {/* Icon Badge */}

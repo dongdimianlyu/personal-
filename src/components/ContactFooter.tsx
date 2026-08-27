@@ -69,9 +69,9 @@ export function ContactFooter() {
               {[...Array(10)].map((_, j) => (
                 <span
                   key={`${i}-${j}`}
-                  className="text-5xl md:text-7xl lg:text-8xl font-display italic text-text-primary/10 tracking-tight pr-8"
+                  className="text-5xl md:text-7xl lg:text-8xl font-display italic text-text-primary/10 tracking-tight pr-4"
                 >
-                  THE WORLD IS YOURS  •
+                  AD ASTRA PER ASPERA  •
                 </span>
               ))}
             </div>
@@ -79,10 +79,10 @@ export function ContactFooter() {
         </div>
       </div>
 
-      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16 mt-auto">
+      <div className="relative z-10 w-full max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16 mt-auto pt-32 md:pt-48 lg:pt-64">
         {/* CTA */}
         <div className="flex flex-col items-center text-center mb-24 md:mb-32">
-          <p className="text-xl md:text-3xl text-text-primary/80 max-w-2xl mx-auto mb-4 leading-relaxed font-display italic">
+          <p className="text-xl md:text-3xl text-text-primary/80 max-w-2xl mx-auto mb-8 leading-relaxed font-display italic">
             "I believe that there is nothing lovelier, deeper, more sympathetic, more rational, more manly, and more perfect than the savior; I say to myself with jealous love that not only is there no one else like him, but that there could be no one. I would even say more: If anyone could prove to me that Christ is outside the truth, and if the truth really did exclude Christ, I should prefer to stay with Christ and not with truth"
           </p>
           <span className="text-sm text-muted uppercase tracking-[0.3em]">— Dostoevsky</span>
@@ -96,7 +96,7 @@ export function ContactFooter() {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
             </div>
-            <span className="text-sm text-muted">Available for projects</span>
+            <span className="text-sm text-muted">Available</span>
           </div>
         </div>
       </div>

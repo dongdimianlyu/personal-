@@ -34,7 +34,7 @@ const config: Config = {
         },
       },
       animation: {
-        "scroll-down": "scroll-down 1.5s ease-in-out infinite",
+        "scroll-down": "scroll-down 2.8s ease-in-out infinite",
         "role-fade-in": "role-fade-in 0.4s ease-out forwards",
         "gradient-shift": "gradient-shift 6s ease infinite",
       },
