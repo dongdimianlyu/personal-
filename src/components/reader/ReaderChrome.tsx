@@ -56,26 +56,6 @@ export function ReaderChrome({ theme, scrollProgress }: ReaderChromeProps) {
       >
         <MotifOrnament motif={theme.motif} className="w-20 h-auto" />
       </div>
-
-      {/* Side bust imagery */}
-      {theme.sideImage && (
-        <div
-          className={`reader-bust-mask reader-ornament-parallax hidden xl:block absolute ${
-            theme.sideImage.side === "left" ? "left-0" : "right-0"
-          } top-[20%] w-[28vw] max-w-md h-[60vh] opacity-[0.07] mix-blend-soft-light`}
-          style={{
-            transform: `translateY(${theme.sideImage.side === "left" ? parallaxLeft : parallaxRight}px)`,
-          }}
-        >
-          <img
-            src={theme.sideImage.src}
-            alt=""
-            className="w-full h-full object-cover object-center grayscale"
-            loading="lazy"
-            decoding="async"
-          />
-        </div>
-      )}
     </div>
   );
 }

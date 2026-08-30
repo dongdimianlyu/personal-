@@ -4,11 +4,6 @@ export interface ReaderTheme {
   motif: ReaderMotif;
   romanNumeral: string;
   essayIndex: number;
-  sideImage?: {
-    src: string;
-    side: "left" | "right";
-    alt: string;
-  };
 }
 
 const READER_THEMES: Record<string, ReaderTheme> = {
@@ -16,11 +11,6 @@ const READER_THEMES: Record<string, ReaderTheme> = {
     motif: "beauty",
     romanNumeral: "I",
     essayIndex: 0,
-    sideImage: {
-      src: "/reader/beauty-bust.webp",
-      side: "left",
-      alt: "",
-    },
   },
   music: {
     motif: "music",
@@ -31,11 +21,6 @@ const READER_THEMES: Record<string, ReaderTheme> = {
     motif: "synchronicity",
     romanNumeral: "III",
     essayIndex: 2,
-    sideImage: {
-      src: "/reader/synchronicity-bust.webp",
-      side: "right",
-      alt: "",
-    },
   },
 };
 
