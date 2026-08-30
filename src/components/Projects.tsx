@@ -42,7 +42,7 @@ export function Projects() {
             Featured <span className="font-display italic">projects</span>
           </h2>
           <p className="text-muted md:text-lg">
-            A selection of projects I've worked on, from concept to launch.
+            A selection of projects I've worked on
           </p>
         </motion.div>
 

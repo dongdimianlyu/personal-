@@ -3,6 +3,7 @@ import { LoadingScreen } from "./components/LoadingScreen";
 import { Hero } from "./components/Hero";
 import { Projects } from "./components/Projects";
 import { Stats } from "./components/Stats";
+import { GeniusInsights } from "./components/GeniusInsights";
 import { ContactFooter } from "./components/ContactFooter";
 import { CustomCursor } from "./components/CustomCursor";
 import { SmoothScroll } from "./components/SmoothScroll";
@@ -36,6 +37,7 @@ function App() {
           <Hero />
           <Projects />
           <Stats />
+          <GeniusInsights />
           <ContactFooter />
         </div>
       </main>

@@ -10,6 +10,7 @@ const config: Config = {
       fontFamily: {
         body: ["Inter", "sans-serif"],
         display: ["Instrument Serif", "serif"],
+        reading: ["Newsreader", "Georgia", "serif"],
       },
       colors: {
         bg: "hsl(var(--bg))",
