@@ -3,10 +3,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import Lenis from "lenis";
 import { ArrowUpRight, X } from "lucide-react";
 import { useLenis } from "../context/LenisContext";
+import { INSIGHT_UI, type InsightLocale } from "../data/insight-locale";
 import type { Insight } from "../data/insights";
+import { LanguageToggle } from "./LanguageToggle";
 
 interface InsightReaderProps {
   insight: Insight | null;
+  locale: InsightLocale;
+  onLocaleChange: (locale: InsightLocale) => void;
   onClose: () => void;
 }
 
@@ -17,8 +21,15 @@ const scrollReveal = {
   transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
 };
 
-export function InsightReader({ insight, onClose }: InsightReaderProps) {
+export function InsightReader({
+  insight,
+  locale,
+  onLocaleChange,
+  onClose,
+}: InsightReaderProps) {
   const { pause, resume } = useLenis();
+  const ui = INSIGHT_UI[locale];
+  const readingFont = locale === "zh" ? "font-reading-zh" : "font-reading";
   const scrollRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
@@ -68,7 +79,7 @@ export function InsightReader({ insight, onClose }: InsightReaderProps) {
       readerLenis.destroy();
       setScrollProgress(0);
     };
-  }, [insight]);
+  }, [insight, locale]);
 
   let paragraphIndex = 0;
 
@@ -76,7 +87,7 @@ export function InsightReader({ insight, onClose }: InsightReaderProps) {
     <AnimatePresence>
       {insight && (
         <motion.div
-          key={insight.id}
+          key={`${insight.id}-${locale}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -99,14 +110,19 @@ export function InsightReader({ insight, onClose }: InsightReaderProps) {
                   <span className="w-8 h-8 rounded-full border border-stroke flex items-center justify-center group-hover:border-text-primary/40 transition-colors">
                     <X className="w-4 h-4" />
                   </span>
-                  Back
+                  {ui.back}
                 </button>
-                <span className="text-xs text-muted uppercase tracking-[0.3em] hidden sm:block">
-                  Genius Insights
-                </span>
+                <div className="flex items-center gap-4">
+                  <LanguageToggle locale={locale} onChange={onLocaleChange} />
+                  <span className="text-xs text-muted uppercase tracking-[0.3em] hidden sm:block">
+                    {ui.headerLabel}
+                  </span>
+                </div>
               </div>
 
-              <article className="max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-20 font-reading">
+              <article
+                className={`max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-20 ${readingFont}`}
+              >
                 <motion.header
                   {...scrollReveal}
                   className="mb-12 md:mb-16"
@@ -114,7 +130,13 @@ export function InsightReader({ insight, onClose }: InsightReaderProps) {
                   <p className="text-xs text-muted uppercase tracking-[0.3em] mb-6 font-body">
                     {insight.subtitle}
                   </p>
-                  <h1 className="text-4xl md:text-6xl font-display italic tracking-tight leading-[1.1] mb-6">
+                  <h1
+                    className={`text-4xl md:text-6xl tracking-tight leading-[1.1] mb-6 ${
+                      locale === "zh"
+                        ? "font-reading-zh font-medium"
+                        : "font-display italic"
+                    }`}
+                  >
                     {insight.title}
                   </h1>
                   <div className="w-16 h-px accent-gradient" />
@@ -131,7 +153,7 @@ export function InsightReader({ insight, onClose }: InsightReaderProps) {
                           key={i}
                           {...scrollReveal}
                           className={`text-[1.125rem] md:text-[1.25rem] leading-[1.85] tracking-[0.01em] text-text-primary/88 ${
-                            isFirst ? "insight-drop-cap" : ""
+                            isFirst && locale === "en" ? "insight-drop-cap" : ""
                           }`}
                         >
                           {section.content}
@@ -183,7 +205,13 @@ export function InsightReader({ insight, onClose }: InsightReaderProps) {
                           {...scrollReveal}
                           className="border-l-2 border-text-primary/30 pl-6 md:pl-8 py-2 my-10"
                         >
-                          <p className="text-2xl md:text-3xl font-display italic text-text-primary/90 leading-snug">
+                          <p
+                            className={`text-2xl md:text-3xl text-text-primary/90 leading-snug ${
+                              locale === "zh"
+                                ? "font-reading-zh font-medium"
+                                : "font-display italic"
+                            }`}
+                          >
                             {section.content}
                           </p>
                         </motion.blockquote>
@@ -236,7 +264,7 @@ export function InsightReader({ insight, onClose }: InsightReaderProps) {
                               <span className="absolute inset-0 rounded-full opacity-0 group-hover/spotify:opacity-100 accent-gradient transition-opacity" />
                               <span className="absolute inset-[1.5px] bg-surface rounded-full" />
                               <span className="relative z-10 text-sm font-medium font-body">
-                                Listen on Spotify
+                                {ui.listenSpotify}
                               </span>
                               <ArrowUpRight className="relative z-10 w-4 h-4 transition-transform group-hover/spotify:translate-x-0.5 group-hover/spotify:-translate-y-0.5" />
                             </a>
@@ -284,7 +312,9 @@ export function InsightReader({ insight, onClose }: InsightReaderProps) {
                                     <td
                                       key={ci}
                                       className={`px-5 py-4 text-[1.0625rem] ${
-                                        ci > 0 ? "tabular-nums font-mono text-sm" : "font-reading"
+                                        ci > 0
+                                          ? "tabular-nums font-mono text-sm"
+                                          : readingFont
                                       }`}
                                     >
                                       {cell}
@@ -343,7 +373,7 @@ export function InsightReader({ insight, onClose }: InsightReaderProps) {
                   >
                     <span className="absolute inset-0 opacity-0 group-hover:opacity-100 accent-gradient transition-opacity" />
                     <span className="absolute inset-[2px] bg-bg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <span className="relative z-10 font-medium">Close</span>
+                    <span className="relative z-10 font-medium">{ui.close}</span>
                   </button>
                 </motion.div>
               </article>

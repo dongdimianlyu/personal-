@@ -116,7 +116,7 @@ export const INSIGHTS: Insight[] = [
     title: "Testing Synchronicity",
     subtitle: "On Jung, Schopenhauer, and a statistical experiment in meaningful coincidence",
     teaser:
-      "Jung's idea, a chi-squared test on friendship and zodiac elements, and the sanity checks that made it honest",
+      "Jung's idea, a chi-squared test on friendship and zodiac elements",
     coverImage: "/insights/synchronicity-cover.jpg",
     sections: [
       {
@@ -219,7 +219,3 @@ export const INSIGHTS: Insight[] = [
     ],
   },
 ];
-
-export function getInsightById(id: string): Insight | undefined {
-  return INSIGHTS.find((insight) => insight.id === id);
-}

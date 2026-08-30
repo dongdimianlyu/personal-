@@ -1,13 +1,33 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { INSIGHTS } from "../data/insights";
+import {
+  getInsightById,
+  getInsights,
+  INSIGHT_UI,
+  type InsightLocale,
+} from "../data/insight-locale";
 import { InsightReader } from "./InsightReader";
+import { LanguageToggle } from "./LanguageToggle";
 
 export function GeniusInsights() {
+  const [locale, setLocale] = useState<InsightLocale>("en");
   const [activeInsightId, setActiveInsightId] = useState<string | null>(null);
+  const insights = getInsights(locale);
+  const ui = INSIGHT_UI[locale];
   const activeInsight =
-    INSIGHTS.find((insight) => insight.id === activeInsightId) ?? null;
+    (activeInsightId ? getInsightById(activeInsightId, locale) : null) ?? null;
+
+  const handleLocaleChange = (nextLocale: InsightLocale) => {
+    setLocale(nextLocale);
+    if (
+      activeInsightId &&
+      nextLocale === "zh" &&
+      !getInsightById(activeInsightId, "zh")
+    ) {
+      setActiveInsightId(null);
+    }
+  };
 
   return (
     <>
@@ -18,25 +38,28 @@ export function GeniusInsights() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
             viewport={{ once: true, margin: "-80px" }}
-            className="max-w-xl mb-16 md:mb-24"
+            className="mb-16 md:mb-24"
           >
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-8 h-px bg-stroke" />
-              <span className="text-xs text-muted uppercase tracking-[0.3em]">
-                Writings
-              </span>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+              <div className="max-w-xl">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-8 h-px bg-stroke" />
+                  <span className="text-xs text-muted uppercase tracking-[0.3em]">
+                    {ui.sectionEyebrow}
+                  </span>
+                </div>
+                <h2 className="text-4xl md:text-6xl font-medium tracking-tight mb-6">
+                  {ui.sectionTitle}{" "}
+                  <span className="font-display italic">{ui.sectionTitleItalic}</span>
+                </h2>
+                <p className="text-muted md:text-lg">{ui.sectionDescription}</p>
+              </div>
+              <LanguageToggle locale={locale} onChange={handleLocaleChange} />
             </div>
-            <h2 className="text-4xl md:text-6xl font-medium tracking-tight mb-6">
-              Genius <span className="font-display italic">insights</span>
-            </h2>
-            <p className="text-muted md:text-lg">
-              Reflections on beauty, music, and the things that point beyond
-              themselves.
-            </p>
           </motion.div>
 
           <div className="flex flex-col gap-6 md:gap-8">
-            {INSIGHTS.map((insight, i) => (
+            {insights.map((insight, i) => (
               <motion.button
                 key={insight.id}
                 type="button"
@@ -62,12 +85,20 @@ export function GeniusInsights() {
                 <div className="relative z-10 flex flex-col justify-between h-full min-h-[280px] md:min-h-[340px] p-8 md:p-12">
                   <div className="max-w-xl">
                     <p className="text-xs text-muted uppercase tracking-[0.3em] mb-4">
-                      Essay {String(i + 1).padStart(2, "0")}
+                      {ui.essayLabel(i)}
                     </p>
-                    <h3 className="text-3xl md:text-5xl font-display italic tracking-tight text-text-primary mb-4 leading-tight">
+                    <h3
+                      className={`text-3xl md:text-5xl tracking-tight text-text-primary mb-4 leading-tight ${
+                        locale === "zh" ? "font-reading-zh font-medium" : "font-display italic"
+                      }`}
+                    >
                       {insight.title}
                     </h3>
-                    <p className="text-sm md:text-base text-text-primary/70 leading-relaxed">
+                    <p
+                      className={`text-sm md:text-base text-text-primary/70 leading-relaxed ${
+                        locale === "zh" ? "font-reading-zh" : ""
+                      }`}
+                    >
                       {insight.teaser}
                     </p>
                   </div>
@@ -76,7 +107,7 @@ export function GeniusInsights() {
                     <span className="relative inline-flex items-center gap-2 rounded-full px-5 py-2.5 border border-stroke/80 bg-bg/40 backdrop-blur-sm group-hover:border-transparent transition-all">
                       <span className="absolute inset-0 rounded-full opacity-0 group-hover:opacity-100 accent-gradient transition-opacity" />
                       <span className="absolute inset-[1.5px] bg-bg/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                      <span className="relative z-10 font-medium">Read essay</span>
+                      <span className="relative z-10 font-medium">{ui.read}</span>
                       <ArrowUpRight className="relative z-10 w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                     </span>
                   </div>
@@ -89,6 +120,8 @@ export function GeniusInsights() {
 
       <InsightReader
         insight={activeInsight}
+        locale={locale}
+        onLocaleChange={handleLocaleChange}
         onClose={() => setActiveInsightId(null)}
       />
     </>

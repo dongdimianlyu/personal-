@@ -11,6 +11,7 @@ const config: Config = {
         body: ["Inter", "sans-serif"],
         display: ["Instrument Serif", "serif"],
         reading: ["Newsreader", "Georgia", "serif"],
+        "reading-zh": ["Noto Serif SC", "serif"],
       },
       colors: {
         bg: "hsl(var(--bg))",
