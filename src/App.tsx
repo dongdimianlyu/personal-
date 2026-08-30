@@ -7,6 +7,7 @@ import { GeniusInsights } from "./components/GeniusInsights";
 import { ContactFooter } from "./components/ContactFooter";
 import { CustomCursor } from "./components/CustomCursor";
 import { SmoothScroll } from "./components/SmoothScroll";
+import { ScrollRestoration } from "./components/ScrollRestoration";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,17 +16,11 @@ function App() {
     if ("scrollRestoration" in history) {
       history.scrollRestoration = "manual";
     }
-    window.scrollTo(0, 0);
   }, []);
-
-  useEffect(() => {
-    if (!isLoading) {
-      window.scrollTo(0, 0);
-    }
-  }, [isLoading]);
 
   return (
     <SmoothScroll>
+      <ScrollRestoration active={!isLoading} />
       <main className="bg-bg min-h-screen text-text-primary">
         <CustomCursor disabled={isLoading} />
         {isLoading && <LoadingScreen onComplete={() => setIsLoading(false)} />}

@@ -1,10 +1,13 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Lenis from "lenis";
 import { ArrowUpRight, X } from "lucide-react";
 import { useLenis } from "../context/LenisContext";
+import { useLenisRaf } from "../hooks/useLenisRaf";
+import { READER_LENIS_OPTIONS } from "../lib/lenis-config";
 import { INSIGHT_UI, type InsightLocale } from "../data/insight-locale";
 import type { Insight } from "../data/insights";
+import { getScrollRevealViewport } from "./ScrollReveal";
 import { LanguageToggle } from "./LanguageToggle";
 
 interface InsightReaderProps {
@@ -14,12 +17,6 @@ interface InsightReaderProps {
   onClose: () => void;
 }
 
-const scrollReveal = {
-  initial: { opacity: 0, y: 24 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-60px" },
-  transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const },
-};
 
 export function InsightReader({
   insight,
@@ -33,6 +30,19 @@ export function InsightReader({
   const scrollRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [readerLenis, setReaderLenis] = useState<Lenis | null>(null);
+
+  const reveal = useMemo(
+    () => ({
+      initial: { opacity: 0, y: 28 },
+      whileInView: { opacity: 1, y: 0 },
+      viewport: getScrollRevealViewport(scrollRef),
+      transition: { duration: 1.05, ease: [0.16, 1, 0.3, 1] as const },
+    }),
+    []
+  );
+
+  useLenisRaf(readerLenis);
 
   useEffect(() => {
     if (!insight) return;
@@ -54,29 +64,25 @@ export function InsightReader({
   useEffect(() => {
     if (!insight || !scrollRef.current || !contentRef.current) return;
 
-    const readerLenis = new Lenis({
+    const instance = new Lenis({
+      ...READER_LENIS_OPTIONS,
       wrapper: scrollRef.current,
       content: contentRef.current,
-      duration: 1.6,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-      wheelMultiplier: 0.9,
     });
 
-    readerLenis.on("scroll", ({ progress }) => {
+    setReaderLenis(instance);
+
+    const onScroll = ({ progress }: { progress: number }) => {
       setScrollProgress(progress);
-    });
-
-    let rafId: number;
-    const raf = (time: number) => {
-      readerLenis.raf(time);
-      rafId = requestAnimationFrame(raf);
     };
-    rafId = requestAnimationFrame(raf);
+
+    instance.on("scroll", onScroll);
+    instance.scrollTo(0, { immediate: true });
 
     return () => {
-      cancelAnimationFrame(rafId);
-      readerLenis.destroy();
+      instance.off("scroll", onScroll);
+      instance.destroy();
+      setReaderLenis(null);
       setScrollProgress(0);
     };
   }, [insight, locale]);
@@ -93,13 +99,14 @@ export function InsightReader({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="fixed inset-0 z-[9998] bg-bg/95 backdrop-blur-xl"
+          data-lenis-prevent
         >
           <div
             className="absolute top-0 left-0 right-0 h-[2px] z-20 origin-left accent-gradient"
             style={{ transform: `scaleX(${scrollProgress})` }}
           />
 
-          <div ref={scrollRef} className="h-full overflow-hidden">
+          <div ref={scrollRef} className="h-full overflow-hidden overscroll-contain touch-pan-y">
             <div ref={contentRef}>
               <div className="sticky top-0 z-10 flex items-center justify-between px-6 md:px-10 py-5 bg-bg/80 backdrop-blur-md border-b border-stroke/50">
                 <button
@@ -124,7 +131,7 @@ export function InsightReader({
                 className={`max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-20 ${readingFont}`}
               >
                 <motion.header
-                  {...scrollReveal}
+                  {...reveal}
                   className="mb-12 md:mb-16"
                 >
                   <p className="text-xs text-muted uppercase tracking-[0.3em] mb-6 font-body">
@@ -151,7 +158,7 @@ export function InsightReader({
                       return (
                         <motion.p
                           key={i}
-                          {...scrollReveal}
+                          {...reveal}
                           className={`text-[1.125rem] md:text-[1.25rem] leading-[1.85] tracking-[0.01em] text-text-primary/88 ${
                             isFirst && locale === "en" ? "insight-drop-cap" : ""
                           }`}
@@ -165,7 +172,7 @@ export function InsightReader({
                       return (
                         <motion.div
                           key={i}
-                          {...scrollReveal}
+                          {...reveal}
                           className="flex items-center gap-4 py-2"
                         >
                           <div className="w-12 h-px bg-stroke" />
@@ -179,7 +186,7 @@ export function InsightReader({
                       return (
                         <motion.figure
                           key={i}
-                          {...scrollReveal}
+                          {...reveal}
                           className="my-10 md:my-14"
                         >
                           <div className="overflow-hidden rounded-2xl border border-stroke">
@@ -202,7 +209,7 @@ export function InsightReader({
                       return (
                         <motion.blockquote
                           key={i}
-                          {...scrollReveal}
+                          {...reveal}
                           className="border-l-2 border-text-primary/30 pl-6 md:pl-8 py-2 my-10"
                         >
                           <p
@@ -222,7 +229,7 @@ export function InsightReader({
                       return (
                         <motion.aside
                           key={i}
-                          {...scrollReveal}
+                          {...reveal}
                           className="bg-surface/60 border border-stroke rounded-2xl p-6 md:p-8 my-10"
                         >
                           {section.label && (
@@ -277,7 +284,7 @@ export function InsightReader({
                       return (
                         <motion.div
                           key={i}
-                          {...scrollReveal}
+                          {...reveal}
                           className="my-10 overflow-x-auto"
                         >
                           {section.caption && (
@@ -332,7 +339,7 @@ export function InsightReader({
                       return (
                         <motion.div
                           key={i}
-                          {...scrollReveal}
+                          {...reveal}
                           className="my-10"
                         >
                           {section.label && (
@@ -363,7 +370,7 @@ export function InsightReader({
                 </div>
 
                 <motion.div
-                  {...scrollReveal}
+                  {...reveal}
                   className="mt-16 md:mt-24 pt-8 border-t border-stroke flex justify-center"
                 >
                   <button

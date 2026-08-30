@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ArrowUpRight } from "lucide-react";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { useLenis } from "../context/LenisContext";
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -16,6 +17,7 @@ const LINKEDIN_URL = "https://www.linkedin.com/in/jiarenlyu";
 const EMAIL = "jiarenlyu@gmail.com";
 
 export function Hero() {
+  const { scrollTo, lenis } = useLenis();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [roleIndex, setRoleIndex] = useState(0);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -54,13 +56,24 @@ export function Hero() {
   }, []);
 
   useEffect(() => {
-    // Scroll listener for navbar
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 100);
+    const updateScrolled = (scroll: number) => {
+      setIsScrolled(scroll > 100);
     };
+
+    if (lenis) {
+      updateScrolled(lenis.scroll);
+      const onScroll = ({ scroll }: { scroll: number }) => updateScrolled(scroll);
+      lenis.on("scroll", onScroll);
+      return () => {
+        lenis.off("scroll", onScroll);
+      };
+    }
+
+    const handleScroll = () => updateScrolled(window.scrollY);
+    handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [lenis]);
 
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
@@ -88,8 +101,7 @@ export function Hero() {
   };
 
   const scrollToSection = (selector: string) => {
-    const element = document.querySelector(selector);
-    element?.scrollIntoView({ behavior: "smooth" });
+    scrollTo(selector, { offset: -80 });
   };
 
   return (
@@ -142,7 +154,7 @@ export function Hero() {
                   if (link.href.startsWith("#")) {
                     e.preventDefault();
                     if (link.href === "#") {
-                      window.scrollTo({ top: 0, behavior: "smooth" });
+                      scrollTo(0);
                     } else {
                       scrollToSection(link.href);
                     }

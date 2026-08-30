@@ -17,6 +17,20 @@
 
   body {
     @apply bg-bg text-text-primary font-body antialiased selection:bg-text-primary selection:text-bg;
+    overflow-x: hidden;
+  }
+
+  html.lenis,
+  html.lenis body {
+    height: auto;
+  }
+
+  html.lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  html.lenis [data-lenis-prevent] {
+    overscroll-behavior: contain;
   }
 
   body.custom-cursor-active,

@@ -1,5 +1,5 @@
-import { motion } from "framer-motion";
 import { ArrowUpRight, Telescope, Rocket, Wrench } from "lucide-react";
+import { ScrollReveal } from "./ScrollReveal";
 
 const PROJECTS = [
   {
@@ -26,14 +26,7 @@ export function Projects() {
   return (
     <section className="bg-bg py-16 md:py-24" id="work">
       <div className="max-w-[1200px] mx-auto px-6 md:px-10 lg:px-16">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-          viewport={{ once: true, margin: "-80px" }}
-          className="max-w-xl mb-16 md:mb-24"
-        >
+        <ScrollReveal className="max-w-xl mb-16 md:mb-24">
           <div className="flex items-center gap-4 mb-6">
             <div className="w-8 h-px bg-stroke" />
             <span className="text-xs text-muted uppercase tracking-[0.3em]">Selected Work</span>
@@ -44,34 +37,28 @@ export function Projects() {
           <p className="text-muted md:text-lg">
             A selection of projects I've worked on
           </p>
-        </motion.div>
+        </ScrollReveal>
 
-        {/* Project Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           {PROJECTS.map((project, i) => {
             const Icon = project.icon;
             return (
-              <motion.div
+              <ScrollReveal
                 key={project.href}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1.2, delay: i * 0.18, ease: [0.22, 1, 0.36, 1] }}
-                viewport={{ once: true, margin: "-40px" }}
+                delay={i * 0.12}
+                y={40}
                 className="group relative flex flex-col justify-between bg-surface/40 border border-stroke rounded-3xl p-8 md:p-9 min-h-[320px] transition-colors hover:bg-surface/70"
               >
-                {/* Icon Badge */}
                 <div className="relative w-12 h-12 rounded-full mb-8 flex items-center justify-center">
                   <span className="absolute inset-0 rounded-full opacity-60 group-hover:opacity-100 accent-gradient transition-opacity" />
                   <span className="absolute inset-[1.5px] bg-bg rounded-full" />
                   <Icon className="relative z-10 w-5 h-5 text-text-primary" strokeWidth={1.75} />
                 </div>
 
-                {/* Text */}
                 <p className="text-lg md:text-xl leading-relaxed text-text-primary/90 font-display flex-grow">
                   {project.text}
                 </p>
 
-                {/* Button */}
                 <a
                   href={project.href}
                   target="_blank"
@@ -83,7 +70,7 @@ export function Projects() {
                   <span className="relative z-10 text-sm font-medium">{project.label}</span>
                   <ArrowUpRight className="relative z-10 w-4 h-4 transition-transform group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5" />
                 </a>
-              </motion.div>
+              </ScrollReveal>
             );
           })}
         </div>
