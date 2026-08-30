@@ -17,6 +17,7 @@ export const INSIGHT_UI = {
     close: "Close",
     headerLabel: "Genius Insights",
     listenSpotify: "Listen on Spotify",
+    finis: "finis",
   },
   zh: {
     sectionEyebrow: "文集",
@@ -29,6 +30,7 @@ export const INSIGHT_UI = {
     close: "关闭",
     headerLabel: "天才洞见",
     listenSpotify: "在 Spotify 收听",
+    finis: "终",
   },
 } as const;
 

@@ -6,9 +6,13 @@ import { useLenis } from "../context/LenisContext";
 import { useLenisRaf } from "../hooks/useLenisRaf";
 import { READER_LENIS_OPTIONS } from "../lib/lenis-config";
 import { INSIGHT_UI, type InsightLocale } from "../data/insight-locale";
+import { getReaderTheme } from "../data/reader-themes";
 import type { Insight } from "../data/insights";
 import { getScrollRevealViewport } from "./ScrollReveal";
 import { LanguageToggle } from "./LanguageToggle";
+import { ReaderChrome } from "./reader/ReaderChrome";
+import { ReaderMarginalia } from "./reader/ReaderMarginalia";
+import { PullquoteBrackets, SectionFleuron } from "./reader/ReaderOrnaments";
 
 interface InsightReaderProps {
   insight: Insight | null;
@@ -16,7 +20,6 @@ interface InsightReaderProps {
   onLocaleChange: (locale: InsightLocale) => void;
   onClose: () => void;
 }
-
 
 export function InsightReader({
   insight,
@@ -30,7 +33,13 @@ export function InsightReader({
   const scrollRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
   const [readerLenis, setReaderLenis] = useState<Lenis | null>(null);
+
+  const theme = useMemo(
+    () => (insight ? getReaderTheme(insight.id) : null),
+    [insight]
+  );
 
   const reveal = useMemo(
     () => ({
@@ -72,8 +81,15 @@ export function InsightReader({
 
     setReaderLenis(instance);
 
-    const onScroll = ({ progress }: { progress: number }) => {
+    const onScroll = ({
+      progress,
+      scroll,
+    }: {
+      progress: number;
+      scroll: number;
+    }) => {
       setScrollProgress(progress);
+      setScrollY(scroll);
     };
 
     instance.on("scroll", onScroll);
@@ -84,14 +100,17 @@ export function InsightReader({
       instance.destroy();
       setReaderLenis(null);
       setScrollProgress(0);
+      setScrollY(0);
     };
   }, [insight, locale]);
+
+  const showRunningTitle = scrollY > 120;
 
   let paragraphIndex = 0;
 
   return (
     <AnimatePresence>
-      {insight && (
+      {insight && theme && (
         <motion.div
           key={`${insight.id}-${locale}`}
           initial={{ opacity: 0 }}
@@ -106,284 +125,323 @@ export function InsightReader({
             style={{ transform: `scaleX(${scrollProgress})` }}
           />
 
-          <div ref={scrollRef} className="h-full overflow-hidden overscroll-contain touch-pan-y">
-            <div ref={contentRef}>
-              <div className="sticky top-0 z-10 flex items-center justify-between px-6 md:px-10 py-5 bg-bg/80 backdrop-blur-md border-b border-stroke/50">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="group flex items-center gap-2 text-sm text-muted hover:text-text-primary transition-colors"
-                >
-                  <span className="w-8 h-8 rounded-full border border-stroke flex items-center justify-center group-hover:border-text-primary/40 transition-colors">
-                    <X className="w-4 h-4" />
-                  </span>
-                  {ui.back}
-                </button>
-                <div className="flex items-center gap-4">
-                  <LanguageToggle locale={locale} onChange={onLocaleChange} />
-                  <span className="text-xs text-muted uppercase tracking-[0.3em] hidden sm:block">
-                    {ui.headerLabel}
-                  </span>
-                </div>
-              </div>
+          <div
+            ref={scrollRef}
+            className="relative h-full overflow-hidden overscroll-contain touch-pan-y"
+          >
+            <ReaderChrome theme={theme} scrollProgress={scrollProgress} />
 
-              <article
-                className={`max-w-3xl mx-auto px-6 md:px-10 py-12 md:py-20 ${readingFont}`}
-              >
-                <motion.header
-                  {...reveal}
-                  className="mb-12 md:mb-16"
-                >
-                  <p className="text-xs text-muted uppercase tracking-[0.3em] mb-6 font-body">
-                    {insight.subtitle}
-                  </p>
-                  <h1
-                    className={`text-4xl md:text-6xl tracking-tight leading-[1.1] mb-6 ${
-                      locale === "zh"
-                        ? "font-reading-zh font-medium"
-                        : "font-display italic"
-                    }`}
-                  >
-                    {insight.title}
-                  </h1>
-                  <div className="w-16 h-px accent-gradient" />
-                </motion.header>
-
-                <div className="space-y-8">
-                  {insight.sections.map((section, i) => {
-                    if (section.type === "paragraph") {
-                      const isFirst = paragraphIndex === 0;
-                      paragraphIndex += 1;
-
-                      return (
-                        <motion.p
-                          key={i}
-                          {...reveal}
-                          className={`text-[1.125rem] md:text-[1.25rem] leading-[1.85] tracking-[0.01em] text-text-primary/88 ${
-                            isFirst && locale === "en" ? "insight-drop-cap" : ""
-                          }`}
-                        >
-                          {section.content}
-                        </motion.p>
-                      );
-                    }
-
-                    if (section.type === "divider") {
-                      return (
-                        <motion.div
-                          key={i}
-                          {...reveal}
-                          className="flex items-center gap-4 py-2"
-                        >
-                          <div className="w-12 h-px bg-stroke" />
-                          <div className="w-1.5 h-1.5 rounded-full bg-text-primary/30" />
-                          <div className="flex-1 h-px bg-stroke/50" />
-                        </motion.div>
-                      );
-                    }
-
-                    if (section.type === "image" && section.src) {
-                      return (
-                        <motion.figure
-                          key={i}
-                          {...reveal}
-                          className="my-10 md:my-14"
-                        >
-                          <div className="overflow-hidden rounded-2xl border border-stroke">
-                            <img
-                              src={section.src}
-                              alt={section.alt ?? ""}
-                              className="w-full h-56 md:h-80 object-cover"
-                            />
-                          </div>
-                          {section.alt && (
-                            <figcaption className="mt-3 text-xs text-muted text-center italic font-body">
-                              {section.alt}
-                            </figcaption>
-                          )}
-                        </motion.figure>
-                      );
-                    }
-
-                    if (section.type === "pullquote" && section.content) {
-                      return (
-                        <motion.blockquote
-                          key={i}
-                          {...reveal}
-                          className="border-l-2 border-text-primary/30 pl-6 md:pl-8 py-2 my-10"
-                        >
-                          <p
-                            className={`text-2xl md:text-3xl text-text-primary/90 leading-snug ${
-                              locale === "zh"
-                                ? "font-reading-zh font-medium"
-                                : "font-display italic"
-                            }`}
-                          >
-                            {section.content}
-                          </p>
-                        </motion.blockquote>
-                      );
-                    }
-
-                    if (section.type === "aside" && section.content) {
-                      return (
-                        <motion.aside
-                          key={i}
-                          {...reveal}
-                          className="bg-surface/60 border border-stroke rounded-2xl p-6 md:p-8 my-10"
-                        >
-                          {section.label && (
-                            <p className="text-xs text-muted uppercase tracking-[0.3em] mb-4 font-body">
-                              {section.label}
-                            </p>
-                          )}
-
-                          {(section.songTitle || section.artist) && (
-                            <div className="mb-5 pb-5 border-b border-stroke/60">
-                              {section.songTitle && (
-                                <p className="text-xl md:text-2xl font-display italic text-text-primary mb-1">
-                                  {section.songTitle}
-                                </p>
-                              )}
-                              {section.artist && (
-                                <p className="text-sm text-muted font-body">
-                                  {section.artist}
-                                </p>
-                              )}
-                            </div>
-                          )}
-
-                          <div
-                            className={`text-[1.0625rem] md:text-[1.125rem] leading-[1.85] tracking-[0.01em] text-text-primary/78 whitespace-pre-line ${
-                              section.songTitle ? "italic" : ""
-                            }`}
-                          >
-                            {section.content}
-                          </div>
-
-                          {section.spotifyUrl && (
-                            <a
-                              href={section.spotifyUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="group/spotify relative inline-flex items-center gap-2 mt-6 rounded-full px-5 py-2.5 transition-all hover:scale-105"
-                            >
-                              <span className="absolute inset-0 rounded-full opacity-0 group-hover/spotify:opacity-100 accent-gradient transition-opacity" />
-                              <span className="absolute inset-[1.5px] bg-surface rounded-full" />
-                              <span className="relative z-10 text-sm font-medium font-body">
-                                {ui.listenSpotify}
-                              </span>
-                              <ArrowUpRight className="relative z-10 w-4 h-4 transition-transform group-hover/spotify:translate-x-0.5 group-hover/spotify:-translate-y-0.5" />
-                            </a>
-                          )}
-                        </motion.aside>
-                      );
-                    }
-
-                    if (section.type === "table" && section.headers && section.rows) {
-                      return (
-                        <motion.div
-                          key={i}
-                          {...reveal}
-                          className="my-10 overflow-x-auto"
-                        >
-                          {section.caption && (
-                            <p className="text-sm text-muted mb-4 font-body italic">
-                              {section.caption}
-                            </p>
-                          )}
-                          <table className="w-full border-collapse rounded-2xl overflow-hidden border border-stroke">
-                            <thead>
-                              <tr className="bg-surface/80">
-                                {section.headers.map((header, hi) => (
-                                  <th
-                                    key={hi}
-                                    className="text-left text-xs uppercase tracking-[0.2em] text-muted font-body px-5 py-4 border-b border-stroke"
-                                  >
-                                    {header}
-                                  </th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {section.rows.map((row, ri) => (
-                                <tr
-                                  key={ri}
-                                  className={`border-b border-stroke/50 last:border-b-0 transition-colors hover:bg-surface/40 ${
-                                    ri === section.rows!.length - 1
-                                      ? "font-medium text-text-primary"
-                                      : "text-text-primary/85"
-                                  }`}
-                                >
-                                  {row.map((cell, ci) => (
-                                    <td
-                                      key={ci}
-                                      className={`px-5 py-4 text-[1.0625rem] ${
-                                        ci > 0
-                                          ? "tabular-nums font-mono text-sm"
-                                          : readingFont
-                                      }`}
-                                    >
-                                      {cell}
-                                    </td>
-                                  ))}
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </motion.div>
-                      );
-                    }
-
-                    if (section.type === "formula" && section.lines) {
-                      return (
-                        <motion.div
-                          key={i}
-                          {...reveal}
-                          className="my-10"
-                        >
-                          {section.label && (
-                            <p className="text-xs text-muted uppercase tracking-[0.3em] mb-3 font-body">
-                              {section.label}
-                            </p>
-                          )}
-                          <div className="insight-formula bg-surface/60 border border-stroke rounded-2xl px-6 py-5 md:px-8 md:py-6">
-                            {section.lines.map((line, li) => (
-                              <p
-                                key={li}
-                                className={`font-mono text-sm md:text-[0.9375rem] leading-relaxed tabular-nums ${
-                                  line.startsWith("─")
-                                    ? "text-stroke my-2 select-none"
-                                    : "text-text-primary/90"
-                                }`}
-                              >
-                                {line}
-                              </p>
-                            ))}
-                          </div>
-                        </motion.div>
-                      );
-                    }
-
-                    return null;
-                  })}
-                </div>
-
-                <motion.div
-                  {...reveal}
-                  className="mt-16 md:mt-24 pt-8 border-t border-stroke flex justify-center"
-                >
+            <div ref={contentRef} className="relative z-[1]">
+              <div className="sticky top-0 z-10 bg-bg/80 backdrop-blur-md border-b border-stroke/50">
+                <div className="flex items-center justify-between px-6 md:px-10 py-5">
                   <button
                     type="button"
                     onClick={onClose}
-                    className="group relative rounded-full text-sm px-7 py-3.5 border border-stroke text-text-primary hover:border-transparent transition-all hover:scale-105 overflow-hidden font-body"
+                    className="group flex items-center gap-2 text-sm text-muted hover:text-text-primary transition-colors shrink-0"
                   >
-                    <span className="absolute inset-0 opacity-0 group-hover:opacity-100 accent-gradient transition-opacity" />
-                    <span className="absolute inset-[2px] bg-bg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <span className="relative z-10 font-medium">{ui.close}</span>
+                    <span className="w-8 h-8 rounded-full border border-stroke flex items-center justify-center group-hover:border-text-primary/40 transition-colors">
+                      <X className="w-4 h-4" />
+                    </span>
+                    <span className="hidden sm:inline">{ui.back}</span>
                   </button>
-                </motion.div>
-              </article>
+
+                  <motion.p
+                    initial={false}
+                    animate={{
+                      opacity: showRunningTitle ? 1 : 0,
+                      y: showRunningTitle ? 0 : 6,
+                    }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    className={`absolute left-1/2 -translate-x-1/2 max-w-[40%] text-center text-sm text-text-primary/70 truncate pointer-events-none ${
+                      locale === "zh" ? "font-reading-zh" : "font-display italic"
+                    }`}
+                  >
+                    {insight.title}
+                  </motion.p>
+
+                  <div className="flex items-center gap-4 shrink-0">
+                    <LanguageToggle locale={locale} onChange={onLocaleChange} />
+                    <span className="text-xs text-muted uppercase tracking-[0.3em] hidden sm:block">
+                      {ui.headerLabel}
+                    </span>
+                  </div>
+                </div>
+                <div className="h-px w-full bg-gradient-to-r from-transparent via-stroke/80 to-transparent" />
+              </div>
+
+              <div className="xl:grid xl:grid-cols-[1fr_minmax(0,42rem)_1fr] xl:gap-8 max-w-[1400px] mx-auto">
+                <ReaderMarginalia theme={theme} scrollProgress={scrollProgress} />
+
+                <article
+                  className={`px-6 md:px-10 py-12 md:py-20 xl:px-0 ${readingFont}`}
+                >
+                  <motion.header {...reveal} className="mb-12 md:mb-16">
+                    <p className="text-xs text-muted uppercase tracking-[0.3em] mb-6 font-body">
+                      {insight.subtitle}
+                    </p>
+                    <h1
+                      className={`text-4xl md:text-6xl tracking-tight leading-[1.1] mb-6 ${
+                        locale === "zh"
+                          ? "font-reading-zh font-medium"
+                          : "font-display italic"
+                      }`}
+                    >
+                      {insight.title}
+                    </h1>
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-px accent-gradient" />
+                      <span className="font-display italic text-sm text-muted/60">
+                        {theme.romanNumeral}
+                      </span>
+                    </div>
+                  </motion.header>
+
+                  <div className="space-y-8">
+                    {insight.sections.map((section, i) => {
+                      if (section.type === "paragraph") {
+                        const isFirst = paragraphIndex === 0;
+                        paragraphIndex += 1;
+
+                        return (
+                          <motion.p
+                            key={i}
+                            {...reveal}
+                            className={`text-[1.125rem] md:text-[1.25rem] leading-[1.85] tracking-[0.01em] text-text-primary/88 ${
+                              isFirst && locale === "en" ? "insight-drop-cap" : ""
+                            }`}
+                          >
+                            {section.content}
+                          </motion.p>
+                        );
+                      }
+
+                      if (section.type === "divider") {
+                        return (
+                          <motion.div
+                            key={i}
+                            {...reveal}
+                            className="flex items-center gap-4 py-4"
+                          >
+                            <div className="flex-1 h-px bg-stroke/60" />
+                            <SectionFleuron className="w-8 h-4 text-text-primary/25 shrink-0" />
+                            <div className="flex-1 h-px bg-stroke/60" />
+                          </motion.div>
+                        );
+                      }
+
+                      if (section.type === "image" && section.src) {
+                        return (
+                          <motion.figure
+                            key={i}
+                            {...reveal}
+                            className="my-10 md:my-14"
+                          >
+                            <div className="overflow-hidden rounded-2xl border border-stroke shadow-[0_0_0_1px_hsl(var(--stroke)/0.3)]">
+                              <img
+                                src={section.src}
+                                alt={section.alt ?? ""}
+                                className="w-full h-56 md:h-80 object-cover"
+                              />
+                            </div>
+                            {section.alt && (
+                              <figcaption className="mt-3 text-xs text-muted text-center italic font-body">
+                                {section.alt}
+                              </figcaption>
+                            )}
+                          </motion.figure>
+                        );
+                      }
+
+                      if (section.type === "pullquote" && section.content) {
+                        return (
+                          <motion.blockquote
+                            key={i}
+                            {...reveal}
+                            className="relative my-12 md:my-16 py-6 text-center"
+                          >
+                            <PullquoteBrackets className="absolute inset-x-0 top-0 mx-auto w-24 h-6 text-text-primary/20" />
+                            <p
+                              className={`relative z-10 text-2xl md:text-[1.75rem] text-text-primary/90 leading-snug px-4 md:px-8 ${
+                                locale === "zh"
+                                  ? "font-reading-zh font-medium"
+                                  : "font-display italic"
+                              }`}
+                            >
+                              <span className="text-text-primary/30 not-italic mr-1">
+                                {locale === "zh" ? "「" : "\u00ab"}
+                              </span>
+                              {section.content}
+                              <span className="text-text-primary/30 not-italic ml-1">
+                                {locale === "zh" ? "」" : "\u00bb"}
+                              </span>
+                            </p>
+                            <PullquoteBrackets className="absolute inset-x-0 bottom-0 mx-auto w-24 h-6 text-text-primary/20 rotate-180" />
+                          </motion.blockquote>
+                        );
+                      }
+
+                      if (section.type === "aside" && section.content) {
+                        return (
+                          <motion.aside
+                            key={i}
+                            {...reveal}
+                            className="relative bg-surface/50 border border-stroke rounded-2xl p-6 md:p-8 my-10 overflow-hidden"
+                          >
+                            <div className="absolute left-0 top-0 bottom-0 w-[3px] accent-gradient" />
+                            {section.label && (
+                              <p className="inline-block text-[10px] text-muted uppercase tracking-[0.3em] mb-4 font-body px-2.5 py-1 rounded-full border border-stroke/60 bg-bg/40">
+                                {section.label}
+                              </p>
+                            )}
+
+                            {(section.songTitle || section.artist) && (
+                              <div className="mb-5 pb-5 border-b border-stroke/60">
+                                {section.songTitle && (
+                                  <p className="text-xl md:text-2xl font-display italic text-text-primary mb-1">
+                                    {section.songTitle}
+                                  </p>
+                                )}
+                                {section.artist && (
+                                  <p className="text-sm text-muted font-body">
+                                    {section.artist}
+                                  </p>
+                                )}
+                              </div>
+                            )}
+
+                            <div
+                              className={`text-[1.0625rem] md:text-[1.125rem] leading-[1.85] tracking-[0.01em] text-text-primary/78 whitespace-pre-line ${
+                                section.songTitle ? "italic" : ""
+                              }`}
+                            >
+                              {section.content}
+                            </div>
+
+                            {section.spotifyUrl && (
+                              <a
+                                href={section.spotifyUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="group/spotify relative inline-flex items-center gap-2 mt-6 rounded-full px-5 py-2.5 transition-all hover:scale-105"
+                              >
+                                <span className="absolute inset-0 rounded-full opacity-0 group-hover/spotify:opacity-100 accent-gradient transition-opacity" />
+                                <span className="absolute inset-[1.5px] bg-surface rounded-full" />
+                                <span className="relative z-10 text-sm font-medium font-body">
+                                  {ui.listenSpotify}
+                                </span>
+                                <ArrowUpRight className="relative z-10 w-4 h-4 transition-transform group-hover/spotify:translate-x-0.5 group-hover/spotify:-translate-y-0.5" />
+                              </a>
+                            )}
+                          </motion.aside>
+                        );
+                      }
+
+                      if (section.type === "table" && section.headers && section.rows) {
+                        return (
+                          <motion.div
+                            key={i}
+                            {...reveal}
+                            className="relative my-10 overflow-x-auto"
+                          >
+                            {section.caption && (
+                              <p className="text-sm text-muted mb-4 font-body italic">
+                                {section.caption}
+                              </p>
+                            )}
+                            <table className="w-full border-collapse rounded-2xl overflow-hidden border border-stroke">
+                              <thead>
+                                <tr className="bg-surface/80">
+                                  {section.headers.map((header, hi) => (
+                                    <th
+                                      key={hi}
+                                      className="text-left text-xs uppercase tracking-[0.2em] text-muted font-body px-5 py-4 border-b border-stroke"
+                                    >
+                                      {header}
+                                    </th>
+                                  ))}
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {section.rows.map((row, ri) => (
+                                  <tr
+                                    key={ri}
+                                    className={`border-b border-stroke/50 last:border-b-0 transition-colors hover:bg-surface/40 ${
+                                      ri === section.rows!.length - 1
+                                        ? "font-medium text-text-primary"
+                                        : "text-text-primary/85"
+                                    }`}
+                                  >
+                                    {row.map((cell, ci) => (
+                                      <td
+                                        key={ci}
+                                        className={`px-5 py-4 text-[1.0625rem] ${
+                                          ci > 0
+                                            ? "tabular-nums font-mono text-sm"
+                                            : readingFont
+                                        }`}
+                                      >
+                                        {cell}
+                                      </td>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </motion.div>
+                        );
+                      }
+
+                      if (section.type === "formula" && section.lines) {
+                        return (
+                          <motion.div key={i} {...reveal} className="relative my-10">
+                            {section.label && (
+                              <p className="text-xs text-muted uppercase tracking-[0.3em] mb-3 font-body">
+                                {section.label}
+                              </p>
+                            )}
+                            <div className="insight-formula bg-surface/60 border border-stroke rounded-2xl px-6 py-5 md:px-8 md:py-6">
+                              {section.lines.map((line, li) => (
+                                <p
+                                  key={li}
+                                  className={`font-mono text-sm md:text-[0.9375rem] leading-relaxed tabular-nums ${
+                                    line.startsWith("─")
+                                      ? "text-stroke my-2 select-none"
+                                      : "text-text-primary/90"
+                                  }`}
+                                >
+                                  {line}
+                                </p>
+                              ))}
+                            </div>
+                          </motion.div>
+                        );
+                      }
+
+                      return null;
+                    })}
+                  </div>
+
+                  <motion.div
+                    {...reveal}
+                    className="mt-16 md:mt-24 pt-8 border-t border-stroke flex flex-col items-center gap-6"
+                  >
+                    <p className="text-xs text-muted/50 uppercase tracking-[0.4em] font-body">
+                      — {ui.finis} —
+                    </p>
+                    <button
+                      type="button"
+                      onClick={onClose}
+                      className="group relative rounded-full text-sm px-7 py-3.5 border border-stroke text-text-primary hover:border-transparent transition-all hover:scale-105 overflow-hidden font-body"
+                    >
+                      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 accent-gradient transition-opacity" />
+                      <span className="absolute inset-[2px] bg-bg rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <span className="relative z-10 font-medium">{ui.close}</span>
+                    </button>
+                  </motion.div>
+                </article>
+
+                <div className="hidden xl:block" aria-hidden />
+              </div>
             </div>
           </div>
         </motion.div>
